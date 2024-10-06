@@ -1,0 +1,22 @@
+import pyqrcode
+import os, shutil
+
+title = input("What is the name of your QR code: ")
+text = input("What would you like the QR Code to say: ")
+
+file_name_svg = title + ".svg"
+file_name_png = title + ".png"
+
+url = pyqrcode.create(text)
+
+url.svg(file_name_svg, scale=8)
+url.png(file_name_png, scale=10)
+
+desktop_path = os.path.join(os.path.expanduser("~"), "Desktop")  # Path to Desktop
+directory_path = os.path.join(desktop_path, title)  # Directory name based on input
+os.makedirs(directory_path, exist_ok=True)
+
+shutil.move(file_name_png, directory_path)  # Move PNG file
+shutil.move(file_name_svg, directory_path)  # Move SVG file
+
+print(f"QR code files have been saved to: {directory_path}")
