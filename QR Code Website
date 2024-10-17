@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Maker</title>
+    <!-- Link to QRCode.js Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+    <h1>QR Code Maker</h1>
+
+    <form id="qr-form">
+        <label for="title">QR Code Title:</label>
+        <input type="text" id="title" name="title"><br><br>
+
+        <label for="text">Text for QR Code:</label>
+        <input type="text" id="text" name="text"><br><br>
+
+        <button type="button" onclick="generateQR()">Generate QR Code</button>
+    </form>
+
+    <div id="qr-output"></div>
+
+    <script>
+        function generateQR() {
+            var text = document.getElementById('text').value;
+
+            // Clear previous QR code if any
+            document.getElementById('qr-output').innerHTML = "";
+
+            // Generate the QR code
+            var qrcode = new QRCode(document.getElementById("qr-output"), {
+                text: text,
+                width: 128,
+                height: 128,
+            });
+        }
+    </script>
+</body>
+</html>
