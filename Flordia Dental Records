@@ -1,0 +1,194 @@
+import java.util.Scanner;
+
+public class DentalRecordsAndrewNelsonMidterm {
+    private static final Scanner keyboard = new Scanner(System.in);
+    private static final int MAX_PEOPLE = 6;
+    private static final int MAX_TEETH = 8;
+    private static final char[] VALID_TEETH = {'I', 'B', 'M'};
+
+    public static void main(String[] args) {
+        System.out.println("Welcome to the Floridian Tooth Records");
+        System.out.println("-".repeat(38));
+
+        // Input number of people in the family
+        int people = getValidNumber("Please enter the number of people in the family (max " + MAX_PEOPLE + "): ", 1, MAX_PEOPLE);
+
+        // Declare arrays to store names and teeth records
+        String[] personName = new String[people];
+        char[][][] teethRecords = new char[people][2][MAX_TEETH];  // 2 layers (upper and lower) for each person
+
+        // Input family member names and their teeth records
+        for (int i = 0; i < people; i++) {
+            System.out.print("Please enter the name for family member " + (i + 1) + ": ");
+            personName[i] = keyboard.nextLine();
+
+            // Input and validate upper and lower teeth strings
+            teethRecords[i][0] = getValidTeeth("Please enter the uppers for " + personName[i] + ": ");
+            teethRecords[i][1] = getValidTeeth("Please enter the lowers for " + personName[i] + ": ");
+        }
+
+        // Menu system
+        boolean continueMenu = true;
+        while (continueMenu) {
+            System.out.print("\n(P)rint, (E)xtract, (R)oot, e(X)it: ");
+            String choice = keyboard.nextLine().toUpperCase();
+
+            switch (choice) {
+                case "P":
+                    printTeethRecords(personName, teethRecords);
+                    break;
+                case "E":
+                    extractTooth(personName, teethRecords);
+                    break;
+                case "R":
+                    reportRootCanalIndices(teethRecords);
+                    break;
+                case "X":
+                    System.out.println("Exiting the Floridian Tooth Records :-)");
+                    continueMenu = false; // Set condition to exit the loop
+                    break;
+                default:
+                    System.out.println("Invalid menu option, try again.");
+            }
+        }
+
+        keyboard.close();
+    }
+
+    // Method to get valid number of people or teeth count
+    private static int getValidNumber(String prompt, int min, int max) {
+        int number = 0;
+        boolean valid = false; // Flag to track validity
+        while (!valid) {
+            System.out.print(prompt);
+            number = keyboard.nextInt();
+            keyboard.nextLine();  // consume newline
+            if (number >= min && number <= max) {
+                valid = true; // Set flag to true if valid
+            } else {
+                System.out.println("Invalid input. Try again.");
+            }
+        }
+        return number; // Return valid number
+    }
+
+    // Method to input and validate teeth strings
+    private static char[] getValidTeeth(String prompt) {
+        boolean valid = false; // Flag to track validity
+        char[] teeth = new char[0]; // Placeholder
+        while (!valid) {
+            System.out.print(prompt);
+            String teethString = keyboard.nextLine().toUpperCase();
+            if (teethString.length() <= MAX_TEETH && allValidTeeth(teethString)) {
+                teeth = teethString.toCharArray(); // Return valid teeth
+                valid = true; // Set flag to true if valid
+            } else {
+                System.out.println("Invalid teeth types or too many teeth, try again.");
+            }
+        }
+        return teeth; // Return valid teeth
+    }
+
+    // Check if all teeth in string are valid
+    private static boolean allValidTeeth(String teethString) {
+        for (char tooth : teethString.toCharArray()) {
+            if (!isValidTooth(tooth)) {
+                return false; // Invalid tooth found
+            }
+        }
+        return true; // All teeth are valid
+    }
+
+    // Check if a single tooth is valid
+    private static boolean isValidTooth(char tooth) {
+        for (char validTooth : VALID_TEETH) {
+            if (tooth == validTooth) {
+                return true; // Valid tooth found
+            }
+        }
+        return false; // No valid tooth
+    }
+
+    // Print teeth records for each family member
+    private static void printTeethRecords(String[] personName, char[][][] teethRecords) {
+        for (int i = 0; i < personName.length; i++) {
+            System.out.println(personName[i]);
+            System.out.print("  Uppers: ");
+            printTeethLayer(teethRecords[i][0]);
+            System.out.print("  Lowers: ");
+            printTeethLayer(teethRecords[i][1]);
+        }
+    }
+
+    private static void printTeethLayer(char[] layer) {
+        for (int j = 0; j < layer.length; j++) {
+            System.out.print((j + 1) + ":" + layer[j] + " ");
+        }
+        System.out.println();
+    }
+
+    // Extract a tooth from the records
+    private static void extractTooth(String[] personName, char[][][] teethRecords) {
+        System.out.print("Which family member: ");
+        String name = keyboard.nextLine();
+        int memberIndex = findMemberIndex(personName, name);
+        if (memberIndex == -1) {
+            System.out.println("Invalid family member, try again.");
+            return;
+        }
+
+        System.out.print("Which tooth layer (U)pper or (L)ower: ");
+        char layer = keyboard.nextLine().toUpperCase().charAt(0);
+        int layerIndex = (layer == 'U') ? 0 : 1; // Default to lower if invalid
+        if (layer != 'U' && layer != 'L') {
+            System.out.println("Invalid layer, try again.");
+            return;
+        }
+
+        System.out.print("Which tooth number: ");
+        int toothIndex = keyboard.nextInt() - 1;
+        keyboard.nextLine();  // consume newline
+
+        if (toothIndex < 0 || toothIndex >= MAX_TEETH || teethRecords[memberIndex][layerIndex][toothIndex] == 'M') {
+            System.out.println("Invalid or missing tooth, try again.");
+            return;
+        }
+
+        teethRecords[memberIndex][layerIndex][toothIndex] = 'M';  // Mark the tooth as missing
+        System.out.println("Tooth extracted.");
+    }
+
+    // Find family member index by name
+    private static int findMemberIndex(String[] personName, String name) {
+        for (int i = 0; i < personName.length; i++) {
+            if (personName[i].equalsIgnoreCase(name)) {
+                return i; // Return the found index
+            }
+        }
+        return -1; // Not found
+    }
+
+    // Calculate and report root canal indices
+    private static void reportRootCanalIndices(char[][][] teethRecords) {
+        int I = 0, B = 0, M = 0;
+        for (char[][] personTeeth : teethRecords) {
+            for (char[] layer : personTeeth) {
+                for (char tooth : layer) {
+                    switch (tooth) {
+                        case 'I': I++; break; // Increment I count
+                        case 'B': B++; break; // Increment B count
+                        case 'M': M++; break; // Increment M count
+                    }
+                }
+            }
+        }
+
+        // Solving the quadratic equation Ix² + Bx - M = 0
+        double discriminant = Math.sqrt(B * B + 4 * I * M);
+        double root1 = (-B + discriminant) / (2 * I);
+        double root2 = (-B - discriminant) / (2 * I);
+
+        System.out.printf("One root canal at %.2f\n", root1);
+        System.out.printf("Another root canal at %.2f\n", root2);
+    }
+}
