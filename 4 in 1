@@ -1,0 +1,167 @@
+class Course:
+    #This class represents a course with attributes like name, credit hours, and letter grade.
+    # It also has a __str__ method to return a string representation of the course.
+    def __init__(self, name, credit_hours, letter_grade):
+        self.name = name
+        self.credit_hours = float(credit_hours)
+        self.letter_grade = letter_grade
+
+    def __str__(self):
+        return f"Course: {self.name}, Credit Hours: {self.credit_hours}, Grade: {self.letter_grade}"
+
+class Student:
+    #This class represents a student with attributes like full name, email, major, project info, and a list of courses.
+    # It also includes methods to add a course, convert letter grades to GPA, calculate GPA, and print student GPA.
+    def __init__(self, full_name, email, major, project_info):
+        self.full_name = full_name
+        self.email = email
+        self.major = major
+        self.project_info = project_info
+        self.courses = []
+        self.letter_grade_to_gpa_dictionary = {
+            'A+': 4.0, 'A': 4.0, 'A-': 3.7, 'B+': 3.3, 'B': 3.0, 'B-': 2.7,
+            'C+': 2.3, 'C': 2.0, 'C-': 1.7, 'D+': 1.3, 'D': 1.0
+        }
+
+    def add_course(self, course):
+        #this function represents adding a course to figure out the students GPA
+        self.courses.append(course)
+
+    def letter_grade_to_gpa(self, gpa_letter):
+        #This function represents adding a letter grade based off the GPA equivalent
+        return self.letter_grade_to_gpa_dictionary.get(gpa_letter, 0.0)
+
+    def calculate_gpa(self):
+        #This function represnts calculating the gpa based off of the credit hours and course grade
+        total_quality_points = sum(course.credit_hours * self.letter_grade_to_gpa(course.letter_grade)
+                                   for course in self.courses)
+        total_credit_hours = sum(course.credit_hours for course in self.courses)
+        return total_quality_points / total_credit_hours if total_credit_hours != 0 else 0.0
+
+    def print_student_gpa(self):
+        #this function prints the calculated GPA alongside the list of the students name, email, major, and project name
+        print(f"Student: {self.full_name}, Email: {self.email}, Major: {self.major}, Project: {self.project_info}")
+        for course in self.courses:
+            print(course)
+        print(f"Final GPA: {self.calculate_gpa()}")
+
+def calculate_student_GPA():
+    #This function takes user input for student information, adds courses, and prints the student's GPA using the Student class
+    student_info = input("Enter student's full name, email, major, and project information (separated by commas): ")
+    full_name, email, major, project_info = student_info.split(',')
+
+    myStudent = Student(full_name.strip(), email.strip(), major.strip(), project_info.strip())
+
+    num_courses = 0
+    while num_courses < 2 or num_courses > 6:
+        num_courses = int(input("How many courses do you want to add (2-6): "))
+        if num_courses < 2 or num_courses > 6:
+            print("Invalid input")
+
+    for i in range(1, num_courses + 1):
+        course_info = input(f"Enter course {i} name, credit hours, and letter grade (separated by commas): ")
+        name, credit_hours, letter_grade = course_info.split(',')
+        myStudent.add_course(Course(name.strip(), float(credit_hours.strip()), letter_grade.strip()))
+
+    myStudent.print_student_gpa()
+    print()
+    print('-' * 50)
+    main()
+
+
+
+import random
+def lottery_number_generator():
+    #This function generates random lottery numbers and prints them, including a power ball number.
+    first_five = random.sample(range(1, 70), 5)
+    first_five.sort()
+    power_ball = random.randint(1, 26)
+    print(f"Your Lucky Numbers are: {first_five[0]} {first_five[1]} {first_five[2]} {first_five[3]} {first_five[4]}")
+    print(f"Your Power Number is: {power_ball}")
+    print(f"Here is the result:  {first_five[0]} {first_five[1]} {first_five[2]} {first_five[3]} {first_five[4]} {power_ball}")
+    print()
+    print("-" * 50)
+    main()
+
+
+def pig_latin():
+    #This function converts a sentence into Pig Latin and prints the result.
+    pig_latin_words = []
+    sentence = input("Enter sentence to be converted into Pig Latin: ")
+    words = sentence.split()
+    for word in words:
+        pig_latin_word = word[1:].upper() + word[0].upper() + "AY"
+        pig_latin_words.append(pig_latin_word)
+    pig_latin_sentence = " ".join(pig_latin_words)
+    print(pig_latin_sentence)
+    print()
+    print("-" * 50)
+    main()
+    return pig_latin_sentence
+
+
+
+def rock_paper_scissors_game():
+    #This function implements a simple rock-paper-scissors game where the user plays against the computer.
+    import random
+
+    computer_choice = random.randint(1, 3)
+    user_choice = input("Enter your choice (rock, paper, scissors): ")
+
+    if computer_choice == 1:
+        print("Computer chose rock.")
+    elif computer_choice == 2:
+        print("Computer chose paper.")
+    else:
+        print("Computer chose scissors.")
+
+    if user_choice == "rock":
+        if computer_choice == 1:
+            print("It's a tie!")
+        elif computer_choice == 2:
+            print("Computer wins!")
+        else:
+            print("You win!")
+    elif user_choice == "paper":
+        if computer_choice == 1:
+            print("You win!")
+        elif computer_choice == 2:
+            print("It's a tie!")
+        else:
+            print("Computer wins!")
+    elif user_choice == "scissors":
+        if computer_choice == 1:
+            print("Computer wins!")
+        elif computer_choice == 2:
+            print("You win!")
+        else:
+            print("It's a tie!")
+    else:
+        print("Invalid choice. Please choose rock, paper, or scissors.")
+
+    print("End of game.")
+    print()
+    print("-" * 50)
+    main()
+
+def main():
+    #This function is the main menu of the program, allowing the user to choose between calculating GPA,
+    # generating lottery numbers, converting to Pig Latin, playing rock-paper-scissors, or exiting the program.
+    print("Welcome to CSC115 Final Project.""\nEnter 1 to Calculate GPA""\nEnter 2 for Lottery Number Generator"
+          "\nEnter 3 for Pig Latin""\nEnter 4 for Rock Paper Scissors""\nEnter 9 to Exit")
+    menu = float(input("Enter menu option 1,2,3,4 or 9 to Exit: "))
+    if menu == 1:
+        calculate_student_GPA()
+    elif menu == 2:
+        lottery_number_generator()
+    elif menu == 3:
+       pig_latin()
+    elif menu == 4:
+        rock_paper_scissors_game()
+    elif menu == 9:
+        print("Exiting The Program. Good-Bye!")
+    else:
+        print("Invalid menu option. Please try again.")
+
+if __name__ == "__main__":
+    main()
